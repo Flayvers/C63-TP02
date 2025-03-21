@@ -1,47 +1,56 @@
 #include <iostream>
 #include <memory>
 #include "raylib.h"
+#include "Global.h"
 #include "Engine.h"
 #include "Scene.h"
 #include "ServiceLocator.h"
 #include "Logger.h"
 #include "Button.h"
-#include "Scene.h"
-#include "GameObject.h"
-#include "GoPlayer.h"
+#include "CharacterController.h"
+#include "Projectile.h"
 
-using namespace LE;
+using namespace std;
 
 int main()
 {
-    std::shared_ptr<LE::Logger> logger = std::make_shared<LE::Logger>();
-    service_locator.registerService(logger);
-    std::shared_ptr<LE::Engine> engine = std::make_shared<LE::Engine>(1000, 1000, "Test Player move", 60);
-    service_locator.registerService(engine);
+    const string ballImgPath = GetWorkingDirectory() + string("\\res\\BeachBall.png");
+    const string charImgPath = GetWorkingDirectory() + string("\\res\\TopViewPerson.png");
+    const string brickImgPath = GetWorkingDirectory() + string("\\res\\bricksx64.png");
+    shared_ptr<LE::Engine> engine = InitLoopEngine(1000, 1000, "Test mouvement");
+    shared_ptr<LE::Scene> scene = make_shared<LE::Scene>("Test");
 
-    auto sceneGame = std::make_shared<LE::Scene>("Game");
-    auto quitFunc = []() {SendCommand([](Engine& InEngine) {InEngine.SwitchScene("Menu"); }); };
-    auto player = std::make_shared<LE::Player>();
+    shared_ptr<LE::Projectile> proj = make_shared<LE::Projectile>(ballImgPath, Vector2{ 500.f,500.f });
+    proj->SetScale(1.1f);
+    shared_ptr<LE::CharacterController> character = make_shared<LE::CharacterController>(charImgPath, Vector2{ 200.f,200.f });
+    character->SetScale(1.5f);
 
-    auto imgB = std::make_shared<LE::GameObjectSingleImage>("invalid image name", "Red Square");
-    imgB->SetPosition(Vector2{ 150.f,150.f });
-    imgB->SetColorTint(RED);
-    imgB->SetCollisionMask(3);
-    auto funcCollisionOther = [](const CollisionEvent& InCollisionEvent) {
-        if (InCollisionEvent._OtherObject != nullptr)
-        {
-            cout << "Moi aussi je collisionne avec " << InCollisionEvent._OtherObject->GetName() << endl;
+    shared_ptr<LE::Button> btnVelocity = make_shared<LE::Button>(0, 50, 100, 50, "Velocity",
+        [&proj]() {
+            if (proj)
+            {
+                proj->SetVelocity(GetRandomValue(0, 400));
+            }
         }
-        };
-    imgB->OnCollisionEvent(funcCollisionOther);
-    sceneGame->AddGameObject2D(imgB);
-
-
-    sceneGame->AddGameObject2D(player);
-
-    engine->RegisterScene(sceneGame);
-    engine->SetClearColor(WHITE);
-    engine->SetDebugMode(true);
-    engine->StartGame("Game");
+    );
+    shared_ptr<LE::Button> btnDirection = make_shared<LE::Button>(120, 50, 100, 50, "Direction",
+        [&proj]() {
+            if (proj)
+            {
+                proj->SetDirection({ (float)GetRandomValue(-100, 100),(float)GetRandomValue(-100, 100) });
+            }
+        }
+    );
+    //Raccourcis est ok car 0 est l'equivalent de false
+    if (engine && scene && proj)
+    {
+        scene->AddGameObject2D(proj);
+        scene->AddGameObject2D(btnVelocity);
+        scene->AddGameObject2D(btnDirection);
+        scene->AddGameObject2D(character);
+        engine->SetClearColor(PINK);
+        //Scène vide
+        engine->RegisterScene(scene);
+        engine->StartGame("Test");
+    }
 }
-

@@ -27,8 +27,9 @@
     <ClCompile Include="..\LoopEngine - Alpha\LoopEngine\Logger.cpp" />
     <ClCompile Include="..\LoopEngine - Alpha\LoopEngine\Scene.cpp" />
     <ClCompile Include="..\LoopEngine - Alpha\LoopEngine\ServiceLocator.cpp" />
-    <ClCompile Include="GoPlayer.cpp" />
+    <ClCompile Include="ChracterController.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LoopEngine - Alpha\LoopEngine\BaseObject.h" />
@@ -39,7 +40,8 @@
     <ClInclude Include="..\LoopEngine - Alpha\LoopEngine\Logger.h" />
     <ClInclude Include="..\LoopEngine - Alpha\LoopEngine\Scene.h" />
     <ClInclude Include="..\LoopEngine - Alpha\LoopEngine\ServiceLocator.h" />
-    <ClInclude Include="GoPlayer.h" />
+    <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="Projectile.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
